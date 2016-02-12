@@ -701,7 +701,6 @@ class ConferenceApi(remote.Service):
             form.check_initialized()
         return form
 
-
     def _createSpeakerObject(self, request):
         """Create Speaker object, 
         returning SpeakerForm/request."""
@@ -903,6 +902,13 @@ class ConferenceApi(remote.Service):
                 'Only the conference organizer can delete sessions for the conference')
 
         session_key.delete()
+
+        # Delete session_key from profile wishlists
+        profiles = Profile.query()
+        for profile in profiles:
+            if session_key in profile.sessionWishlist:
+                profile.sessionWishlist.remove(session_key)
+                profile.put()
         return StringMessage(data='Session deleted')
 
 
