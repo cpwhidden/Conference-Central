@@ -111,12 +111,22 @@ class ConferenceQueryForms(messages.Message):
 
 class Speaker(ndb.Model):
     """Speaker -- Speaker object"""
-    name = ndb.StringProperty()
+    name = ndb.StringProperty(required=True)
+    bio = ndb.StringProperty()
+    age = ndb.IntegerProperty()
+    emailAddress = ndb.StringProperty()
 
 class SpeakerForm(messages.Message):
     """SpeakerForm -- Speaker form"""
     name = messages.StringField(1)
-    websafeKey = messages.StringField(2)
+    bio = messages.StringField(2)
+    age = messages.IntegerField(3)
+    emailAddress = messages.StringField(4)
+    websafeKey = messages.StringField(5)
+
+class SpeakerForms(messages.Message):
+    """SpeakerForms -- Speaker forms"""
+    items = messages.MessageField(SpeakerForm, 1, repeated=True)
 
 class SessionType(messages.Enum):
     """SessionType -- enumeration value for session type"""
@@ -127,10 +137,10 @@ class SessionType(messages.Enum):
 
 class Session(ndb.Model):
     """Session -- Session Object"""
-    conferenceId = ndb.KeyProperty(kind=Conference)
+    conferenceKey = ndb.KeyProperty(kind=Conference)
     name = ndb.StringProperty(required=True)
     highlights = ndb.StringProperty()
-    speaker = ndb.KeyProperty(kind=Speaker)
+    speakerKey = ndb.KeyProperty(kind=Speaker)
     duration = ndb.FloatProperty()
     typeOfSession = ndb.StringProperty(default='Other')
     date = ndb.DateProperty()
@@ -138,10 +148,10 @@ class Session(ndb.Model):
 
 class SessionForm(messages.Message):
     """SessionForm -- getSessionsBySpeker outbound form"""
-    conferenceId = messages.StringField(1)
+    conferenceKey = messages.StringField(1)
     name = messages.StringField(2)
     highlights = messages.StringField(3)
-    speaker = messages.StringField(4)
+    speakerKey = messages.StringField(4)
     duration = messages.FloatField(5)
     typeOfSession = messages.EnumField('SessionType', 6, default='Other')
     date = messages.StringField(7)
